@@ -1,0 +1,45 @@
+name: Supabase Migrations CI
+
+on:
+  push:
+    branches:
+      - master # O 'main', dependiendo de tu rama principal
+    paths:
+      - 'supabase/migrations/**' # Activar solo si cambian archivos en esta carpeta
+
+jobs:
+  apply_migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Utiliza una versión LTS de Node.js
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Link Supabase Project (using secrets)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PROJECT_REF: gsfdzqvhtaixbopjtbrm # Reemplazado con tu Project Ref
+        run: |
+          echo "Linking Supabase project..."
+          # La CLI de Supabase usa las variables de entorno SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY y SUPABASE_PROJECT_REF
+          # No necesitamos ejecutar 'supabase link' explícitamente si las variables de entorno están presentes
+          # Verificamos que la CLI pueda acceder a la configuración
+          supabase status --project-ref gsfdzqvhtaixbopjtbrm # Verificando la conexión
+
+      - name: Apply Supabase Migrations
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PROJECT_REF: gsfdzqvhtaixbopjtbrm # Tu Project Ref
+        run: |
+          echo "Applying Supabase migrations..."
+          supabase migration up --yes # --yes confirma automáticamente
+          echo "Migrations applied."
