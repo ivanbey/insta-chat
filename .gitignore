@@ -1,0 +1,34 @@
+# Dependencias de Node.js
+node_modules/
+
+# Archivos de build
+dist/
+.vercel/
+
+# Archivos de entorno (deben ser gestionados de forma segura y separada)
+.env
+.env.*
+!src/.env.example # Permitir el .env.example si se desea
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de configuración de IDE/Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Archivos de Vercel
+.vercel/
+
+# Supabase CLI cache
+.env.local
+.env.test
+supabase/.temp
+
+# Otros
+*.DS_Store
